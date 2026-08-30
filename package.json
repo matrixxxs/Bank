@@ -2,10 +2,11 @@
   "name": "bank",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.ts",
+    "start": "dist/src/index.js",
+    "dev": "tsx watch src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "prisma skills sync || exit 0"
   },
@@ -16,24 +17,18 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/matrixxxs/Bank/issues"
   },
   "homepage": "https://github.com/matrixxxs/Bank#readme",
   "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.4.0",
-    "prisma": "^8.0.0-rc.12",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@prisma/client": "^7.10.0",
-    "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "zod": "^4.4.3"
+    "prisma": "^7.10.0"
   }
 }

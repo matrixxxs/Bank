@@ -1,0 +1,12 @@
+import "dotenv/config";
+import express from "express";
+import { errorRequest } from "./error/error.js";
+
+const app = express();
+app.use(express.json());
+app.use(errorRequest);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}`);
+});

@@ -11,3 +11,107 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+
+// =========================
+// ENUMS
+// =========================
+
+enum UserRole {
+  admin
+  moderator
+  member
+}
+
+enum AccountType {
+  current
+  saving
+}
+
+enum TransactionType {
+  transfer
+  deposit
+  withdrawal
+}
+
+enum TransactionStatus {
+  pending
+  completed
+  failed
+  cancelled
+}
+
+
+// =========================
+// USERS
+// =========================
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  bvn        String    @unique
+  username   String    @unique
+  role       UserRole  @default(member)
+  password   String
+  createdAt  DateTime  @default(now())
+
+  customer   Customer?
+}
+
+
+// =========================
+// CUSTOMERS
+// =========================
+
+model Customer {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @unique
+  firstName   String
+  middleName  String?
+  lastName    String
+  address     String?
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accounts    Account[]
+}
+
+
+// =========================
+// ACCOUNTS
+// =========================
+
+model Account {
+  id                 Int            @id @default(autoincrement())
+  balance            Decimal        @default(0.00) @db.Decimal(15, 2)
+  type               AccountType
+  customerId         Int
+
+  customer           Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  sentTransactions   Transaction[]  @relation("SenderAccount")
+  receivedTransactions Transaction[] @relation("ReceiverAccount")
+
+  @@index([customerId])
+}
+
+
+// =========================
+// TRANSACTIONS
+// =========================
+
+model Transaction {
+  id                 Int                @id @default(autoincrement())
+  senderAccountId    Int?
+  receiverAccountId  Int?
+  amount             Decimal            @db.Decimal(15, 2)
+  type               TransactionType
+  status             TransactionStatus  @default(pending)
+  createdAt          DateTime           @default(now())
+
+  senderAccount      Account?           @relation("SenderAccount", fields: [senderAccountId], references: [id])
+  receiverAccount    Account?           @relation("ReceiverAccount", fields: [receiverAccountId], references: [id])
+
+  @@index([senderAccountId])
+  @@index([receiverAccountId])
+  @@index([createdAt])
+}

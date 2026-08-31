@@ -11,11 +11,11 @@ export interface TokenPayLoad {
   user_id: string;
 }
 
-export const singInToken = (payloas: TokenPayLoad) => {
-  return jwt.sign(payloas, getScrete(), { expiresIn: "10d" });
+export const singInToken = (user_id: string) => {
+  return jwt.sign(user_id, getScrete(), { expiresIn: "10d" });
 };
 
-const compareToken = (token: string): TokenPayLoad => {
+export const verifyToken = (token: string): TokenPayLoad => {
   const decode = jwt.verify(token, getScrete());
   if (typeof decode === "string") {
     throw Error("Undefined payload");

@@ -1,33 +1,51 @@
 import prisma from "../../config/prisma.js";
-
-import { Prisma } from "../../generated/prisma/client.js";
-
-interface signIn {
-  user_name: string;
-  bvn: string;
-  email: string;
+import { UnAuthentication } from "../../error/error.js";
+import { singInToken } from "../../utils/jwt.js";
+import bcrypt from "bcrypt";
+interface SignIn {
   password: string;
+  user_name: string;
+}
+interface User {
+  token: string;
+  user: {
+    user_id: string;
+    user_name: string;
+    email: string;
+  };
 }
 
-export const signInServices = async (data: signIn) => {
+export const signInServices = async (data: SignIn): Promise<User> => {
   try {
-    const create = await prisma.user.create({
-      data: {
+    const getAccount = await prisma.user.findFirst({
+      where: {
         username: data.user_name,
-        bvn: data.bvn,
-        email: data.email,
-        password: data.password,
+      },
+      select: {
+        id: true,
+        password: true,
+        email: true,
+        username: true,
       },
     });
 
-    return create;
-  } catch (error: any) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        throw new Error("User already exists");
-      }
+    if (!getAccount) {
+      throw new UnAuthentication("Invalid email or password");
     }
-
+    const compare = await bcrypt.compare(data.password, getAccount.password);
+    if (!compare) {
+      throw new UnAuthentication("Invalid email or password");
+    }
+    const token = singInToken(getAccount.id);
+    return {
+      token,
+      user: {
+        user_id: getAccount.id,
+        email: getAccount.email,
+        user_name: getAccount.username,
+      },
+    };
+  } catch (error) {
     throw error;
   }
 };

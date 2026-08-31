@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -47,7 +45,7 @@ enum TransactionStatus {
 // =========================
 
 model User {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email      String    @unique
   bvn        String    @unique
   username   String    @unique
@@ -64,8 +62,8 @@ model User {
 // =========================
 
 model Customer {
-  id          Int       @id @default(autoincrement())
-  userId      Int       @unique
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String    @unique @db.Uuid
   firstName   String
   middleName  String?
   lastName    String
@@ -81,15 +79,15 @@ model Customer {
 // =========================
 
 model Account {
-  id                 Int            @id @default(autoincrement())
-  balance            Decimal        @default(0.00) @db.Decimal(15, 2)
-  type               AccountType
-  customerId         Int
+  id                    String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  balance               Decimal        @default(0.00) @db.Decimal(15, 2)
+  type                  AccountType
+  customerId            String         @db.Uuid
 
-  customer           Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer              Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  sentTransactions   Transaction[]  @relation("SenderAccount")
-  receivedTransactions Transaction[] @relation("ReceiverAccount")
+  sentTransactions      Transaction[]  @relation("SenderAccount")
+  receivedTransactions  Transaction[]  @relation("ReceiverAccount")
 
   @@index([customerId])
 }
@@ -100,9 +98,9 @@ model Account {
 // =========================
 
 model Transaction {
-  id                 Int                @id @default(autoincrement())
-  senderAccountId    Int?
-  receiverAccountId  Int?
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  senderAccountId    String?            @db.Uuid
+  receiverAccountId  String?            @db.Uuid
   amount             Decimal            @db.Decimal(15, 2)
   type               TransactionType
   status             TransactionStatus  @default(pending)

@@ -9,7 +9,7 @@ interface signUp {
   password: string;
 }
 
-export const signInServices = async (data: signUp) => {
+export const signUpServices = async (data: signUp) => {
   try {
     const hashedPassword = await bcrypt.hash(data.password, SaltRound);
 

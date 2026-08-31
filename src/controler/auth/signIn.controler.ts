@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { signInServices } from "../../services/auth/signIn.services.js";
-import { signInSchema } from "../../schema/auth/signUp.schema.js";
+import { signInSchema } from "../../schema/auth/signIn.schema.js";
 
 export const signIn = async (
   req: Request,
@@ -11,5 +11,7 @@ export const signIn = async (
     const data = signInSchema.parse(req.body);
     const result = await signInServices(data);
     res.status(200).json(result);
-  } catch (error) {}
+  } catch (error) {
+    throw error;
+  }
 };

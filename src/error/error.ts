@@ -11,6 +11,11 @@ export class ApendError extends Error {
   }
 }
 
+export class ValidationError extends ApendError {
+  constructor(message: string) {
+    super(message, 400);
+  }
+}
 export class BadRequest extends ApendError {
   constructor(message: string) {
     super(message, 400);

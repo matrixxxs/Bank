@@ -8,8 +8,14 @@ interface signUp {
   email: string;
   password: string;
 }
+interface SingUpResponse {
+  id: string;
+  username: string;
+  bvn: string;
+  email: string;
+}
 
-export const signUpServices = async (data: signUp) => {
+export const signUpServices = async (data: signUp): Promise<SingUpResponse> => {
   try {
     const hashedPassword = await bcrypt.hash(data.password, SaltRound);
 
@@ -22,7 +28,12 @@ export const signUpServices = async (data: signUp) => {
       },
     });
 
-    return create;
+    return {
+      id: create.id,
+      username: create.username,
+      bvn: create.bvn,
+      email: create.email,
+    };
   } catch (error: any) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {

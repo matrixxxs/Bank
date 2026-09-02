@@ -12,7 +12,7 @@ export interface TokenPayLoad {
 }
 
 export const singInToken = (user_id: string) => {
-  return jwt.sign(user_id, getScrete(), { expiresIn: "10d" });
+  return jwt.sign({ user_id }, getScrete(), { expiresIn: "10d" });
 };
 
 export const verifyToken = (token: string): TokenPayLoad => {

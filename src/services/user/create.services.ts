@@ -1,5 +1,5 @@
 import prisma from "../../config/prisma.js";
-
+import { generateAccountNumber } from "../../utils/accountNumber.js";
 interface CreateUser {
   first_name: string;
   middle_name: string | null;
@@ -26,6 +26,7 @@ export const createUserService = async (
       });
       const account = await tx.account.create({
         data: {
+          accountNumber: generateAccountNumber(),
           customerId: result.id,
           type: "current",
           balance: 15000,

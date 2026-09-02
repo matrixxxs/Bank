@@ -80,6 +80,7 @@ model Customer {
 
 model Account {
   id                    String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountNumber         String         @unique
   balance               Decimal        @default(0.00) @db.Decimal(15, 2)
   type                  AccountType
   customerId            String         @db.Uuid

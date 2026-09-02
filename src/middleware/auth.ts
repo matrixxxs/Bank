@@ -15,7 +15,8 @@ export const authMiddleWare = async (
     }
 
     const token = header.split(" ")[1];
-
+    console.log(token);
+    console.log(token?.split(".").length);
     if (!token) {
       throw new UnAuthorized("Accessgg Denied");
     }

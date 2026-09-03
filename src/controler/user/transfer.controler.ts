@@ -9,7 +9,7 @@ export const transfer = async (
   try {
     const user_id = req.user_id as string;
     const data = transferSchema.parse(req.body);
-    const result = transferService(data, user_id);
+    const result = await transferService(data, user_id);
     res.status(200).json(result);
   } catch (error) {
     throw next(error);

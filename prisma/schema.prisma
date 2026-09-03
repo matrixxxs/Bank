@@ -87,6 +87,7 @@ model Account {
 
   customer              Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
+  transactions          Transaction[]  @relation("AccountTransactions")
   sentTransactions      Transaction[]  @relation("SenderAccount")
   receivedTransactions  Transaction[]  @relation("ReceiverAccount")
 
@@ -100,16 +101,20 @@ model Account {
 
 model Transaction {
   id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId          String?            @db.Uuid
   senderAccountId    String?            @db.Uuid
   receiverAccountId  String?            @db.Uuid
+
   amount             Decimal            @db.Decimal(15, 2)
   type               TransactionType
   status             TransactionStatus  @default(pending)
   createdAt          DateTime           @default(now())
 
+  account            Account?           @relation("AccountTransactions", fields: [accountId], references: [id])
   senderAccount      Account?           @relation("SenderAccount", fields: [senderAccountId], references: [id])
   receiverAccount    Account?           @relation("ReceiverAccount", fields: [receiverAccountId], references: [id])
 
+  @@index([accountId])
   @@index([senderAccountId])
   @@index([receiverAccountId])
   @@index([createdAt])

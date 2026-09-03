@@ -50,7 +50,10 @@ export const createUserService = async (
       };
     });
 
-    return response;
+    return {
+      user: response.user,
+      balance: response.balance,
+    };
   } catch (error) {
     throw error;
   }
